@@ -74,6 +74,14 @@ class DrawingApp:
         # Convert PostScript to PNG
         img = Image.open(ps_file)
         img.save(file_path, "png")
+        # post to server
+        with open(file_path, "rb") as img_file:
+            response = requests.post(
+                "http://localhost:8000/annotate", files={"file": img_file}
+            )
+            if response.status_code == 200:
+                annotation = response.json().get("annotation", "")
+                self.label.config(text=f"Annotation: {annotation}")
         print(f"Canvas saved as {file_path}")
 
 if __name__ == "__main__":
